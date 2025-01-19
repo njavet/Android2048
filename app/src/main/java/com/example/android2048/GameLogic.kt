@@ -68,33 +68,51 @@ class GameLogic {
         spawnTile()
     }
 
-    private fun mergeUp() {
-        for (c in 0 until size) {
-            val column = IntArray(size) { board[it][c] }
-            val (merged, score) = mergeRowLeft(column.filter({x -> x != 0}).toMutableList())
-            for (r in 0 until size) {
-                board[r][c] = merged[r]
+    private fun rotateMatrixClockwise() {
+        val size = board.size
+
+        // Transpose the board
+        for (i in 0 until size) {
+            for (j in i + 1 until size) {
+                val temp = board[i][j]
+                board[i][j] = board[j][i]
+                board[j][i] = temp
             }
-            totalScore += score
         }
-        spawnTile()
+        // Reverse each row
+        board.forEach { it.reverse() }
     }
+
+    private fun rotateMatrixCounterclockwise() {
+        val size = board.size
+
+        for (i in 0 until size) {
+            for (j in i + 1 until size) {
+                val temp = board[i][j]
+                board[i][j] = board[j][i]
+                board[j][i] = temp
+            }
+        }
+        board = board.reversed()
+    }
+
+    private fun mergeUp() {
+        rotateMatrixCounterclockwise()
+        mergeLeft()
+        rotateMatrixClockwise()
+    }
+
     fun swipeUp() {
         mergeUp()
         spawnTile()
     }
 
     private fun mergeDown() {
-        for (c in 0 until size) {
-            val column = IntArray(size) { board[it][c] }.reversedArray()
-            val (merged, score) = mergeRowLeft(column.filter({x -> x != 0}).toMutableList())
-            val reme = merged.reversed()
-            for (r in 0 until size) {
-                board[r][c] = reme[r]
-            }
-            totalScore += score
-        }
+        rotateMatrixClockwise()
+        mergeLeft()
+        rotateMatrixCounterclockwise()
     }
+
     fun swipeDown() {
         mergeDown()
         spawnTile()
