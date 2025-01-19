@@ -1,11 +1,18 @@
 package com.example.android2048
 
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
 
 class GameLogic {
     private val size = 4
-    var board = Array(size) { IntArray(size) }
-    var totalScore: Int = 0
-    var score: Int = 0
+    var board by mutableStateOf(List(size) { MutableList(size) {0} })
+        private set
+
+    var totalScore by mutableIntStateOf(0)
+        private set
 
     init {
         reset()
@@ -35,73 +42,80 @@ class GameLogic {
         }
     }
 
-    fun swipeLeft() {
-        for (r in 0 until size) {
-            val row = board[r]
-            val (merged, newScore) = mergeRowLeft(row.filter({x -> x != 0}))
-            for (c in 0 until size)
-                board[r][c] = merged[c]
+    private fun mergeLeft() {
+        board = board.map { row ->
+            val (merged, score) = mergeRowLeft(row.filter({x -> x != 0}).toMutableList())
+            val zeroPadds = size - merged.size
+            val paddedRow = (merged + List(zeroPadds) { 0 }).toMutableList()
             totalScore += score
-            score = newScore
+            paddedRow
         }
+    }
+
+    fun swipeLeft() {
+        mergeLeft()
         spawnTile()
     }
 
+    private fun mergeRight() {
+        board = board.map { it.reversed().toMutableList() }
+        mergeLeft()
+        board = board.map { it.reversed().toMutableList() }
+    }
+
     fun swipeRight() {
-        for (r in 0 until size){
-            val row = board[r].reversed()
-            val (merged, newScore) = mergeRowLeft(row.filter({x -> x != 0}))
-            val reme = merged.reversed()
-            for (c in 0 until size)
-                board[r][c] = reme[c]
-            totalScore += score
-            score = newScore
-        }
+        mergeRight()
         spawnTile()
     }
-    fun swipeUp() {
+
+    private fun mergeUp() {
         for (c in 0 until size) {
             val column = IntArray(size) { board[it][c] }
-            val (merged, newScore) = mergeRowLeft(column.filter({x -> x != 0}))
+            val (merged, score) = mergeRowLeft(column.filter({x -> x != 0}).toMutableList())
             for (r in 0 until size) {
                 board[r][c] = merged[r]
             }
             totalScore += score
-            score = newScore
         }
         spawnTile()
     }
+    fun swipeUp() {
+        mergeUp()
+        spawnTile()
+    }
 
-    fun swipeDown() {
+    private fun mergeDown() {
         for (c in 0 until size) {
             val column = IntArray(size) { board[it][c] }.reversedArray()
-            val (merged, newScore) = mergeRowLeft(column.filter({x -> x != 0}))
+            val (merged, score) = mergeRowLeft(column.filter({x -> x != 0}).toMutableList())
             val reme = merged.reversed()
             for (r in 0 until size) {
                 board[r][c] = reme[r]
             }
             totalScore += score
-            score = newScore
         }
+    }
+    fun swipeDown() {
+        mergeDown()
         spawnTile()
     }
 
-    private fun mergeRowLeft(row: List<Int>,
+    private fun mergeRowLeft(row: MutableList<Int>,
                              acc: List<Int> = emptyList(),
-                             score: Int = 0): Pair<List<Int>, Int> {
+                             score: Int = 0): Pair<MutableList<Int>, Int> {
         if (row.isEmpty())
-            return acc to score
+            return acc.toMutableList() to score
         val x = row[0]
         if (row.size == 1) {
-            return acc + x to score
+            return (acc + x).toMutableList() to score
         }
         return if (x == row[1]) {
-            val newRow = row.drop(2)
+            val newRow = row.drop(2).toMutableList()
             val newAcc = acc + (2 * x)
             val newScore = score + 2 * x
             mergeRowLeft(newRow, newAcc, newScore)
         } else {
-            val newRow = row.drop(1)
+            val newRow = row.drop(1).toMutableList()
             val newAcc = acc + x
             mergeRowLeft(newRow, newAcc, score)
         }

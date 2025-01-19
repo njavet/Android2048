@@ -31,8 +31,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GameScreen() {
     val gameLogic = remember { GameLogic() }
-    var board by remember { mutableStateOf(gameLogic.board)}
-    var score by remember { mutableStateOf(gameLogic.totalScore)}
 
     Column(
         modifier = Modifier
@@ -55,14 +53,12 @@ fun GameScreen() {
                             gameLogic.swipeUp()
                         }
                     }
-                    board = gameLogic.board
-                    score = gameLogic.totalScore
                 }
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Score: $score", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
-        BoardView(board = board)
+        Text("Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
+        BoardView(board = gameLogic.board)
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -71,8 +67,6 @@ fun GameScreen() {
         ) {
             Button(onClick = {
                 gameLogic.swipeUp()
-                board = gameLogic.board
-                score = gameLogic.totalScore
             }) {
                 Text("swipe up")
             }
@@ -82,23 +76,17 @@ fun GameScreen() {
             ) {
                 Button(onClick = {
                     gameLogic.swipeLeft()
-                    board = gameLogic.board
-                    score = gameLogic.totalScore
                 }) {
                     Text("swipe left")
                 }
                 Button(onClick = {
                     gameLogic.swipeRight()
-                    board = gameLogic.board
-                    score = gameLogic.totalScore
                 }) {
                     Text("swipe right")
                 }
             }
             Button(onClick = {
                 gameLogic.swipeDown()
-                board = gameLogic.board
-                score = gameLogic.totalScore
             }) {
                 Text("swipe down")
             }
@@ -107,7 +95,7 @@ fun GameScreen() {
 }
 
 @Composable
-fun BoardView(board: Array<IntArray>) {
+fun BoardView(board: List<MutableList<Int>>) {
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
