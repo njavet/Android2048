@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GameScreen() {
-    val gameLogic = remmeber { GameLogic() }
+    val gameLogic = remember { GameLogic() }
     var board by remember { mutableStateOf(gameLogic.board)}
     var score by remember { mutableStateOf(gameLogic.totalScore)}
 
@@ -93,6 +93,6 @@ fun CellView(value: Int) {
             .background(if (value == 0) Color.Gray else Color.Yellow),
         contentAlignment = Alignment.Center
     ) {
-        BasicText(text = if (value == 0) "" else value.toString(), fontSize = 24.sp)
+        Text(text = if (value == 0) "" else value.toString(), fontSize = 24.sp)
     }
 }
