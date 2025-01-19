@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -113,14 +114,40 @@ fun BoardView(board: List<MutableList<Int>>) {
     }
 }
 
+
 @Composable
 fun CellView(value: Int) {
+    val backgroundColor = tileColors[value] ?: Color.Black // Default to black if value isn't in the map
+
     Box(
         modifier = Modifier
             .size(80.dp)
-            .background(if (value == 0) Color.Gray else Color.Yellow),
+            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
+            .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = if (value == 0) "" else value.toString(), fontSize = 24.sp)
+        if (value != 0) {
+            Text(
+                text = value.toString(),
+                fontSize = 24.sp,
+                color = Color.White
+            )
+        }
     }
 }
+
+val tileColors = mapOf(
+    0 to Color(0xFFEDEDED),  // Light gray for empty tiles
+    2 to Color(0xFFF3E5F5),  // Light purple
+    4 to Color(0xFFE1BEE7),
+    8 to Color(0xFFCE93D8),
+    16 to Color(0xFFBA68C8),
+    32 to Color(0xFFAB47BC),
+    64 to Color(0xFF9C27B0),
+    128 to Color(0xFF8E24AA),
+    256 to Color(0xFF7B1FA2),
+    512 to Color(0xFF6A1B9A),
+    1024 to Color(0xFF4A148C), // Dark purple
+    2048 to Color(0xFF38006B), // Even darker purple
+    4096 to Color(0xFF260044)  // Blackish purple for extreme values
+)

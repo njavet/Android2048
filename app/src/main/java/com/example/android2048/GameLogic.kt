@@ -9,10 +9,8 @@ import androidx.compose.runtime.setValue
 class GameLogic {
     private val size = 4
     var board by mutableStateOf(List(size) { MutableList(size) {0} })
-        private set
 
     var totalScore by mutableIntStateOf(0)
-        private set
 
     init {
         reset()
@@ -42,7 +40,7 @@ class GameLogic {
         }
     }
 
-    private fun mergeLeft() {
+    fun mergeLeft() {
         board = board.map { row ->
             val (merged, score) = mergeRowLeft(row.filter({x -> x != 0}).toMutableList())
             val zeroPadds = size - merged.size
@@ -57,7 +55,7 @@ class GameLogic {
         spawnTile()
     }
 
-    private fun mergeRight() {
+    fun mergeRight() {
         board = board.map { it.reversed().toMutableList() }
         mergeLeft()
         board = board.map { it.reversed().toMutableList() }
@@ -68,7 +66,7 @@ class GameLogic {
         spawnTile()
     }
 
-    private fun rotateMatrixClockwise() {
+    fun rotateMatrixClockwise() {
         val size = board.size
 
         // Transpose the board
@@ -83,7 +81,7 @@ class GameLogic {
         board.forEach { it.reverse() }
     }
 
-    private fun rotateMatrixCounterclockwise() {
+    fun rotateMatrixCounterclockwise() {
         val size = board.size
 
         for (i in 0 until size) {
@@ -96,7 +94,7 @@ class GameLogic {
         board = board.reversed()
     }
 
-    private fun mergeUp() {
+    fun mergeUp() {
         rotateMatrixCounterclockwise()
         mergeLeft()
         rotateMatrixClockwise()
@@ -107,7 +105,7 @@ class GameLogic {
         spawnTile()
     }
 
-    private fun mergeDown() {
+    fun mergeDown() {
         rotateMatrixClockwise()
         mergeLeft()
         rotateMatrixCounterclockwise()
