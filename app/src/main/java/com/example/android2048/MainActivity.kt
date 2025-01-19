@@ -1,92 +1,99 @@
 package com.example.android2048
 
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.widget.GridLayout
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.android2048.ui.theme.Android2048Theme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.Alignment
+import kotlin.math.abs
+
 
 class MainActivity : ComponentActivity() {
-    private lateinit var gameLogic: GameLogic
-    private lateinit var gameBoard: GridLayout
-    private lateinit var gestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
-
-        gameLogic = GameLogic()
-
-        gestureDetector = GestureDetector(this, GestureListener())
-
-        drawBoard()
+        setContent {
+            GameScreen()
+        }
     }
+}
 
-    private fun drawBoard() {
-        gameBoard.removeAllViews()
-        for (r in 0 until gameLogic.board.size) {
-            for (c in 0 until gameLogic.board[r].size) {
-                val value = gameLogic.board[r][c]
-                val tile = TextView(this).apply {
-                    text = if (value > 0) value.toString() else ""
-                    textSize = 24f
-                    setPadding(16, 16, 16, 16)
+@Composable
+fun GameScreen() {
+    val gameLogic = remmeber { GameLogic() }
+    var board by remember { mutableStateOf(gameLogic.board)}
+    var score by remember { mutableStateOf(gameLogic.totalScore)}
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray)
+            .pointerInput(Unit){
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    val (dx, dy) = dragAmount
+                    if (abs(dx) > abs(dy)) {
+                        if (dx > 0) {
+                            gameLogic.swipeRight()
+                        } else {
+                            gameLogic.swipeLeft()
+                        }
+                    } else {
+                        if (dy > 0) {
+                            gameLogic.swipeDown()
+                        } else {
+                            gameLogic.swipeUp()
+                        }
+                    }
+                    board = gameLogic.board
+                    score = gameLogic.totalScore
                 }
-                gameBoard.addView(tile)
+            },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Score: $score", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
+        BoardView(board = board)
+    }
+}
+
+@Composable
+fun BoardView(board: Array<IntArray>) {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        for (row in board) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                for (cell in row) {
+                    CellView(value = cell)
+                }
             }
         }
     }
+}
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        return gestureDetector.onTouchEvent(event)
-    }
-
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        private val swipeThreshold = 100
-        private val swipeVelocityThreshold = 100
-
-        override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            if (e1 == null || e2 == null) return false
-            val diffX = e2.x - e1.x
-            val diffY = e2.y - e1.y
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > swipeThreshold && Math.abs(velocityX) > swipeVelocityThreshold) {
-                    if (diffX > 0) {
-                        gameLogic.swipeRight()
-                    } else {
-                        gameLogic.swipeLeft()
-                    }
-                    drawBoard()
-                    return true
-                }
-            } else {
-                if (Math.abs(diffY) > swipeThreshold && Math.abs(velocityY) > swipeVelocityThreshold) {
-                    if (diffY > 0) {
-                        gameLogic.swipeDown()
-                    } else {
-                        gameLogic.swipeUp()
-                    }
-                    drawBoard()
-                    return true
-                }
-            }
-            return false
-        }
+@Composable
+fun CellView(value: Int) {
+    Box(
+        modifier = Modifier
+            .size(80.dp)
+            .background(if (value == 0) Color.Gray else Color.Yellow),
+        contentAlignment = Alignment.Center
+    ) {
+        BasicText(text = if (value == 0) "" else value.toString(), fontSize = 24.sp)
     }
 }

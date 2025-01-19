@@ -1,8 +1,5 @@
 package com.example.android2048
 
-import androidx.collection.IntList
-import androidx.collection.intListOf
-
 
 class GameLogic {
     private val size = 4
