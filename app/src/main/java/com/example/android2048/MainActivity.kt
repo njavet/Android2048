@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -63,6 +63,46 @@ fun GameScreen() {
     ) {
         Text("Score: $score", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
         BoardView(board = board)
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(onClick = {
+                gameLogic.swipeUp()
+                board = gameLogic.board
+                score = gameLogic.totalScore
+            }) {
+                Text("swipe up")
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = {
+                    gameLogic.swipeLeft()
+                    board = gameLogic.board
+                    score = gameLogic.totalScore
+                }) {
+                    Text("swipe left")
+                }
+                Button(onClick = {
+                    gameLogic.swipeRight()
+                    board = gameLogic.board
+                    score = gameLogic.totalScore
+                }) {
+                    Text("swipe right")
+                }
+            }
+            Button(onClick = {
+                gameLogic.swipeDown()
+                board = gameLogic.board
+                score = gameLogic.totalScore
+            }) {
+                Text("swipe down")
+            }
+        }
     }
 }
 
