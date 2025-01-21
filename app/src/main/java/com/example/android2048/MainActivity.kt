@@ -38,23 +38,29 @@ fun GameScreen() {
             .fillMaxSize()
             .background(Color.LightGray)
             .pointerInput(Unit){
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    val (dx, dy) = dragAmount
-                    if (abs(dx) > abs(dy)) {
-                        if (dx > 0) {
-                            gameLogic.swipeRight()
-                        } else {
-                            gameLogic.swipeLeft()
-                        }
-                    } else {
-                        if (dy > 0) {
-                            gameLogic.swipeDown()
-                        } else {
-                            gameLogic.swipeUp()
+                detectDragGestures(
+                    onDragEnd = {
+                        println("swiped...")
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        val threshold = 50f
+                        val (dx, dy) = dragAmount
+                        if (abs(dx) > abs(dy) && abs(dx) > threshold) {
+                            if (dx > 0) {
+                                gameLogic.swipeRight()
+                            } else {
+                                gameLogic.swipeLeft()
+                            }
+                        } else if (abs(dy) > threshold) {
+                            if (dy > 0) {
+                                gameLogic.swipeDown()
+                            } else {
+                                gameLogic.swipeUp()
+                            }
                         }
                     }
-                }
+                )
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
