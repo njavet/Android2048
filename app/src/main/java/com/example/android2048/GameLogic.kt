@@ -72,38 +72,42 @@ class GameLogic {
         spawnTile()
     }
 
-    fun rotateMatrixClockwise() {
-        val size = board.size
+    fun rotateMatrixClockwise(grid: List<MutableList<Int>>): List<MutableList<Int>> {
+        val size = grid.size
+        val newGrid = grid.map { it.toMutableList() }
 
         // Transpose the board
         for (i in 0 until size) {
             for (j in i + 1 until size) {
-                val temp = board[i][j]
-                board[i][j] = board[j][i]
-                board[j][i] = temp
+                val temp = grid[i][j]
+                newGrid[i][j] = grid[j][i]
+                newGrid[j][i] = temp
             }
         }
         // Reverse each row
-        board.forEach { it.reverse() }
+        newGrid.forEach { it.reverse() }
+        return newGrid
     }
 
-    fun rotateMatrixCounterclockwise() {
-        val size = board.size
+    fun rotateMatrixCounterclockwise(grid: List<MutableList<Int>>): List<MutableList<Int>> {
+        val size = grid.size
+        val newGrid = grid.map { it.toMutableList() }
 
         for (i in 0 until size) {
             for (j in i + 1 until size) {
-                val temp = board[i][j]
-                board[i][j] = board[j][i]
-                board[j][i] = temp
+                val temp = grid[i][j]
+                newGrid[i][j] = grid[j][i]
+                newGrid[j][i] = temp
             }
         }
-        board = board.reversed()
+        return newGrid.reversed()
     }
 
-    fun mergeUp() {
-        rotateMatrixCounterclockwise()
-        mergeLeft()
-        rotateMatrixClockwise()
+    fun mergeUp(grid: List<MutableList<Int>>): Pair<List<MutableList<Int>>, Int> {
+        val newGrid = rotateMatrixCounterclockwise(grid)
+        val (merged, score) = mergeLeft(newGrid)
+        val newGrid2 = rotateMatrixClockwise(merged)
+        return Pair(newGrid2, score)
     }
 
     fun swipeUp() {
