@@ -25,6 +25,39 @@ class GameLogic {
 
     }
 
+    fun isGameOver(): Boolean {
+        val zeroCells = mutableListOf<Pair<Int, Int>>()
+        for (r in 0 until size) {
+            for (c in 0 until size) {
+                if (board[r][c] == 0)
+                    zeroCells.add(r to c)
+            }
+        }
+        if (zeroCells.isNotEmpty()) {
+            return false
+        }
+
+        val (merged0, score0) = mergeLeft(board)
+        if (merged0 != board) {
+            return false
+        }
+
+        val (merged1, score1) = mergeDown(board)
+        if (merged1 != board) {
+            return false
+        }
+        val (merged2, score2) = mergeRight(board)
+        if (merged2 != board) {
+            return false
+        }
+        val (merged3, score3) = mergeUp(board)
+        if (merged3 != board) {
+            return false
+        } else {
+            return true
+        }
+    }
+
     private fun spawnTile() {
         val zeroCells = mutableListOf<Pair<Int, Int>>()
         for (r in 0 until size) {
