@@ -40,14 +40,16 @@ class GameLogic {
         }
     }
 
-    fun mergeLeft() {
-        board = board.map { row ->
+    fun mergeLeft(): Pair<List<MutableList<Int>>, Int> {
+        var mergeScore = 0
+        val newBoard = board.map { row ->
             val (merged, score) = mergeRowLeft(row.filter({x -> x != 0}).toMutableList())
             val zeroPadds = size - merged.size
             val paddedRow = (merged + List(zeroPadds) { 0 }).toMutableList()
-            totalScore += score
+            mergeScore += score
             paddedRow
         }
+        return Pair(newBoard, mergeScore)
     }
 
     fun swipeLeft() {
