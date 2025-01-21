@@ -54,9 +54,11 @@ class GameLogic {
 
     fun swipeLeft() {
         val (newBoard, score) = mergeLeft(board)
-        totalScore += score
-        board = newBoard
-        spawnTile()
+        if (newBoard != board) {
+            totalScore += score
+            board = newBoard
+            spawnTile()
+        }
     }
 
     fun mergeRight(grid: List<MutableList<Int>>): Pair<List<MutableList<Int>>, Int> {
@@ -67,9 +69,11 @@ class GameLogic {
 
     fun swipeRight() {
         val (newBoard, score) = mergeRight(board)
-        totalScore += score
-        board = newBoard
-        spawnTile()
+        if (newBoard != board) {
+            totalScore += score
+            board = newBoard
+            spawnTile()
+        }
     }
 
     fun rotateMatrixClockwise(grid: List<MutableList<Int>>): List<MutableList<Int>> {
@@ -112,9 +116,11 @@ class GameLogic {
 
     fun swipeUp() {
         val (newBoard, score) = mergeUp(board)
-        totalScore += score
-        board = newBoard
-        spawnTile()
+        if (newBoard != board) {
+            totalScore += score
+            board = newBoard
+            spawnTile()
+        }
     }
 
     fun mergeDown(grid: List<MutableList<Int>>): Pair<List<MutableList<Int>>, Int> {
@@ -126,9 +132,11 @@ class GameLogic {
 
     fun swipeDown() {
         val (newBoard, score) = mergeDown(board)
-        totalScore += score
-        board = newBoard
-        spawnTile()
+        if (newBoard != board) {
+            totalScore += score
+            board = newBoard
+            spawnTile()
+        }
     }
 
     private fun mergeRowLeft(row: MutableList<Int>,
