@@ -41,12 +41,15 @@ fun GameScreen() {
                 detectDragGestures(
                     onDragEnd = {
                         if (gameLogic.isGameOver()) {
-                            saveScoreToJson(gameLogic.totalScore, "score.json")
+                            val filePath = "game_score.json"
+                            saveScoreToJson(gameLogic.totalScore, filePath)
+                        } else {
+                            println("swiped")
                         }
                     },
                     onDrag = { change, dragAmount ->
                         change.consume()
-                        val threshold = 50f
+                        val threshold = 32f
                         val (dx, dy) = dragAmount
                         if (abs(dx) > abs(dy) && abs(dx) > threshold) {
                             if (dx > 0) {

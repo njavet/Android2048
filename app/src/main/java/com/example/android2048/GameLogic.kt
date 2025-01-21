@@ -1,5 +1,6 @@
 package com.example.android2048
 
+import android.content.Context
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -199,12 +200,12 @@ class GameLogic {
 
 data class GameScore(val score: Int, val timestamp: String)
 
-fun saveScoreToJson(score: Int, filePath: String) {
+fun saveScoreToJson(context: Context, score: Int, filePath: String) {
     val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
     val gameScore = GameScore(score, timestamp)
     val gson = Gson()
     val json = gson.toJson(gameScore)
-
+    val file = File(context.filesDir, filePath)
     // Write JSON to file
     File(filePath).writeText(json)
 }
