@@ -40,7 +40,9 @@ fun GameScreen() {
             .pointerInput(Unit){
                 detectDragGestures(
                     onDragEnd = {
-                        println("swiped...")
+                        if (gameLogic.isGameOver()) {
+                            saveScoreToJson(gameLogic.totalScore, "score.json")
+                        }
                     },
                     onDrag = { change, dragAmount ->
                         change.consume()
@@ -65,6 +67,7 @@ fun GameScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
+        Text("Best Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
         BoardView(board = gameLogic.board)
 
         Column(

@@ -4,7 +4,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-
+import com.google.gson.Gson
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class GameLogic {
     private val size = 4
@@ -192,4 +195,16 @@ class GameLogic {
             mergeRowLeft(newRow, newAcc, score)
         }
     }
+}
+
+data class GameScore(val score: Int, val timestamp: String)
+
+fun saveScoreToJson(score: Int, filePath: String) {
+    val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
+    val gameScore = GameScore(score, timestamp)
+    val gson = Gson()
+    val json = gson.toJson(gameScore)
+
+    // Write JSON to file
+    File(filePath).writeText(json)
 }
