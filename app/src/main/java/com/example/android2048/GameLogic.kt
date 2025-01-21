@@ -40,9 +40,9 @@ class GameLogic {
         }
     }
 
-    fun mergeLeft(): Pair<List<MutableList<Int>>, Int> {
+    fun mergeLeft(grid: List<MutableList<Int>>): Pair<List<MutableList<Int>>, Int> {
         var mergeScore = 0
-        val newBoard = board.map { row ->
+        val newBoard = grid.map { row ->
             val (merged, score) = mergeRowLeft(row.filter({x -> x != 0}).toMutableList())
             val zeroPadds = size - merged.size
             val paddedRow = (merged + List(zeroPadds) { 0 }).toMutableList()
@@ -53,18 +53,22 @@ class GameLogic {
     }
 
     fun swipeLeft() {
-        mergeLeft()
+        val (newBoard, score) = mergeLeft(board)
+        totalScore += score
+        board = newBoard
         spawnTile()
     }
 
-    fun mergeRight() {
-        board = board.map { it.reversed().toMutableList() }
-        mergeLeft()
-        board = board.map { it.reversed().toMutableList() }
+    fun mergeRight(grid: List<MutableList<Int>>): Pair<List<MutableList<Int>>, Int> {
+        val newBoard = grid.map { it.reversed().toMutableList() }
+        val (merged, score) = mergeLeft(newBoard)
+        return Pair(merged.map { it.reversed().toMutableList() }, score)
     }
 
     fun swipeRight() {
-        mergeRight()
+        val (newBoard, score) = mergeRight(board)
+        totalScore += score
+        board = newBoard
         spawnTile()
     }
 
