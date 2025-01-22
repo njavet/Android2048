@@ -50,7 +50,6 @@ fun Screen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val scoreData = readScoreToJson(context, "game_score.json")
     val score = scoreData?.get("score") as? Int ?: 0
-    var move: Int = -1
 
     Box(modifier.fillMaxWidth()) {
         Image(
@@ -67,13 +66,6 @@ fun Screen(modifier: Modifier = Modifier) {
                 .pointerInput(Unit){
                     detectDragGestures(
                         onDragEnd = {
-                            when (move) {
-                                0 -> gameLogic.swipeLeft()
-                                1 -> gameLogic.swipeDown()
-                                2 -> gameLogic.swipeRight()
-                                3 -> gameLogic.swipeUp()
-                                else -> println("invalid move: $move")
-                            }
                             if (gameLogic.isGameOver()) {
                                 gameLogic.reset()
                                 val filePath = "/home/tosh/0x100/game_score.json"
@@ -81,25 +73,29 @@ fun Screen(modifier: Modifier = Modifier) {
                                     saveScoreToJson(context, gameLogic.totalScore, filePath)
 
                                 }
-                            } else {
-                                println("swiped $move")
                             }
                         },
                         onDrag = { change, dragAmount ->
                             change.consume()
-                            val threshold = 50f
+                            val threshold = 64f
                             val (dx, dy) = dragAmount
                             if (abs(dx) > abs(dy) && abs(dx) > threshold) {
+                                println("dx: $dx")
+                                println("dy: $dx")
                                 if (dx > 0) {
-                                    move = 2
+                                    gameLogic.swipeRight()
+                                    println("swiped right")
                                 } else {
-                                    move = 0
+                                    gameLogic.swipeLeft()
+                                    println("swiped left")
                                 }
                             } else if (abs(dy) > threshold) {
                                 if (dy > 0) {
-                                    move = 1
+                                    gameLogic.swipeDown()
+                                    println("swiped down")
                                 } else {
-                                    move = 3
+                                    gameLogic.swipeUp()
+                                    println("swiped up")
                                 }
                             }
                         }
