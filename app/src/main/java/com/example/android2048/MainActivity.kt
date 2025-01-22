@@ -57,11 +57,12 @@ fun Screen(modifier: Modifier = Modifier) {
             painterResource(id = R.drawable.frame),
             contentDescription = "Frame",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
+            contentScale = ContentScale.Crop)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .align(Alignment.Center)
                 .padding(12.dp)
                 .pointerInput(Unit){
                     detectDragGestures(
@@ -71,16 +72,17 @@ fun Screen(modifier: Modifier = Modifier) {
                                 1 -> gameLogic.swipeDown()
                                 2 -> gameLogic.swipeRight()
                                 3 -> gameLogic.swipeUp()
-                                else -> println("invalide move: $move")
+                                else -> println("invalid move: $move")
                             }
                             if (gameLogic.isGameOver()) {
+                                gameLogic.reset()
                                 val filePath = "/home/tosh/0x100/game_score.json"
                                 CoroutineScope(Dispatchers.IO).launch {
                                     saveScoreToJson(context, gameLogic.totalScore, filePath)
 
                                 }
                             } else {
-                                println("swiped")
+                                println("swiped $move")
                             }
                         },
                         onDrag = { change, dragAmount ->
@@ -103,15 +105,30 @@ fun Screen(modifier: Modifier = Modifier) {
                         }
                     )
                 },
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Text("Score: ${gameLogic.totalScore}",
+            Row(modifier = Modifier.fillMaxWidth())
+        {
+            Text(
+                "Score: ${gameLogic.totalScore}",
                 fontSize = 24.sp,
+                color = Color(0xFF6312FF),
+                modifier = Modifier.padding(16.dp))
+        }
+        Row(modifier = Modifier.fillMaxWidth()){
+            Text(
+                "Best Score: ${gameLogic.totalScore}",
+                fontSize = 24.sp,
+                color = Color(0xFF6312FF),
                 modifier = Modifier.padding(16.dp)
-                    )
-            Text("Best Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
+            )
+        }
             BoardView(board = gameLogic.board)
-
+            Button(onClick = {gameLogic.reset()},
+                modifier = modifier.padding(8.dp)) {
+                Text("Restart")
+            }
         }
     }
 }

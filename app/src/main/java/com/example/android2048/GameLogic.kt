@@ -22,6 +22,7 @@ class GameLogic {
     }
 
     fun reset() {
+        totalScore = 0
         for (row in board) {
             row.fill(0)
         }
