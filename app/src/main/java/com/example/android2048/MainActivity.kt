@@ -42,7 +42,6 @@ fun GameScreen() {
                     onDragEnd = {
                         if (gameLogic.isGameOver()) {
                             val filePath = "game_score.json"
-                            saveScoreToJson(gameLogic.totalScore, filePath)
                         } else {
                             println("swiped")
                         }
