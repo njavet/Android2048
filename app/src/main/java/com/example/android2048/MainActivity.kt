@@ -46,98 +46,66 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Screen(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth()) {
-        Image(
-            painterResource(id = R.drawable.frame),
-            contentDescription = "Frame",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillHeight,
-        )
-//        GameScreen()
-    }
-}
-
-@Composable
-fun GameScreen() {
     val gameLogic = remember { GameLogic() }
     val context = LocalContext.current
     val scoreData = readScoreToJson(context, "game_score.json")
     val score = scoreData?.get("score") as? Int ?: 0
     println("score: $score")
     gameLogic.totalScore = score
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray)
-            .pointerInput(Unit){
-                detectDragGestures(
-                    onDragEnd = {
-                        if (gameLogic.isGameOver()) {
-                            val filePath = "/home/tosh/0x100/game_score.json"
-                            CoroutineScope(Dispatchers.IO).launch {
-                                saveScoreToJson(context, gameLogic.totalScore, filePath)
 
-                            }
-                        } else {
-                            println("swiped")
-                        }
-                    },
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        val threshold = 32f
-                        val (dx, dy) = dragAmount
-                        if (abs(dx) > abs(dy) && abs(dx) > threshold) {
-                            if (dx > 0) {
-                                gameLogic.swipeRight()
-                            } else {
-                                gameLogic.swipeLeft()
-                            }
-                        } else if (abs(dy) > threshold) {
-                            if (dy > 0) {
-                                gameLogic.swipeDown()
-                            } else {
-                                gameLogic.swipeUp()
-                            }
-                        }
-                    }
-                )
-            },
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
-        Text("Best Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
-        BoardView(board = gameLogic.board)
-
+    Box(modifier.fillMaxWidth()) {
+        Image(
+            painterResource(id = R.drawable.frame),
+            contentDescription = "Frame",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
+                .pointerInput(Unit){
+                    detectDragGestures(
+                        onDragEnd = {
+                            if (gameLogic.isGameOver()) {
+                                val filePath = "/home/tosh/0x100/game_score.json"
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    saveScoreToJson(context, gameLogic.totalScore, filePath)
+
+                                }
+                            } else {
+                                println("swiped")
+                            }
+                        },
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+                            val threshold = 32f
+                            val (dx, dy) = dragAmount
+                            if (abs(dx) > abs(dy) && abs(dx) > threshold) {
+                                if (dx > 0) {
+                                    gameLogic.swipeRight()
+                                } else {
+                                    gameLogic.swipeLeft()
+                                }
+                            } else if (abs(dy) > threshold) {
+                                if (dy > 0) {
+                                    gameLogic.swipeDown()
+                                } else {
+                                    gameLogic.swipeUp()
+                                }
+                            }
+                        }
+                    )
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = {
-                gameLogic.swipeUp()
-            }) {
-                Text("swipe up")
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(onClick = {
-                    gameLogic.swipeLeft()
-                }) {
-                    Text("swipe left")
-                }
-                Button(onClick = {
-                    gameLogic.swipeRight()
-                }) {
-                    Text("swipe right")
-                }
-            }
-            Button(onClick = {
-                gameLogic.swipeDown()
-            }) {
-                Text("swipe down")
-            }
+            Text("Score: ${gameLogic.totalScore}",
+                fontSize = 24.sp,
+                modifier = Modifier.padding(16.dp)
+                    )
+            Text("Best Score: ${gameLogic.totalScore}", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
+            BoardView(board = gameLogic.board)
+
         }
     }
 }
