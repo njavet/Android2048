@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.max
 
 
 class MainActivity : ComponentActivity() {
@@ -48,8 +49,7 @@ class MainActivity : ComponentActivity() {
 fun Screen(modifier: Modifier = Modifier) {
     val gameLogic = remember { GameLogic() }
     val context = LocalContext.current
-    val scoreData = readScoreToJson(context, "game_score.json")
-    val score = scoreData?.get("score") as? Int ?: 0
+    var bestScore = readScoreToJson(context)
 
     Box(modifier.fillMaxWidth()) {
         Image(
@@ -66,12 +66,11 @@ fun Screen(modifier: Modifier = Modifier) {
                 .pointerInput(Unit){
                     detectDragGestures(
                         onDragEnd = {
+                            bestScore = max(bestScore, gameLogic.totalScore)
                             if (gameLogic.isGameOver()) {
                                 gameLogic.reset()
-                                val filePath = "/home/tosh/0x100/game_score.json"
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    saveScoreToJson(context, gameLogic.totalScore, filePath)
-
+                                    saveScoreToJson(context, gameLogic.totalScore)
                                 }
                             }
                         },
@@ -114,7 +113,7 @@ fun Screen(modifier: Modifier = Modifier) {
         }
         Row(modifier = Modifier.fillMaxWidth()){
             Text(
-                "Best Score: ${gameLogic.totalScore}",
+                "Best Score: $bestScore",
                 fontSize = 24.sp,
                 color = Color(0xFF6312FF),
                 modifier = Modifier.padding(16.dp)

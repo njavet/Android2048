@@ -202,22 +202,15 @@ class GameLogic {
 
 data class GameScore(val score: Int, val timestamp: String)
 
-fun saveScoreToJson(context: Context, score: Int, filePath: String) {
-    val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-    val gameScore = GameScore(score, timestamp)
-    val gson = Gson()
-    val json = gson.toJson(gameScore)
-    val file = File(context.filesDir, filePath)
-    // Write JSON to file
-    File(filePath).writeText(json)
+fun saveScoreToJson(context: Context, score: Int) {
+    val file = context.resources.openRawResource(R.raw.game_score)
+
 }
 
-fun readScoreToJson(context: Context, fileName: String): Map<String, Any>? {
-    val file = File(context.filesDir, fileName)
-    return if (file.exists()) {
-        val json = file.readText()
-        val type = object : TypeToken<Map<String, Any>>() {}.type
-        Gson().fromJson<Map<String, Any>>(json, type)
-    } else {null}
+fun readScoreToJson(context: Context): Int {
+    val file = context.resources.openRawResource(R.raw.game_score)
+    val score = file.read()
+    println(score)
+    return 2
 
 }
