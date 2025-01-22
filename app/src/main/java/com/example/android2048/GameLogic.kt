@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -208,4 +209,14 @@ fun saveScoreToJson(context: Context, score: Int, filePath: String) {
     val file = File(context.filesDir, filePath)
     // Write JSON to file
     File(filePath).writeText(json)
+}
+
+fun readScoreToJson(context: Context, fileName: String): Map<String, Any>? {
+    val file = File(context.filesDir, fileName)
+    return if (file.exists()) {
+        val json = file.readText()
+        val type = object : TypeToken<Map<String, Any>>() {}.type
+        Gson().fromJson<Map<String, Any>>(json, type)
+    } else {null}
+
 }

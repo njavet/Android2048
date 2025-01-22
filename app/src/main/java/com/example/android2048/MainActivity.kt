@@ -16,6 +16,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 
@@ -32,7 +36,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GameScreen() {
     val gameLogic = remember { GameLogic() }
-
+    val context = LocalContext.current
+    val scoreData = readScoreToJson(context, "game_score.json")
+    val score = scoreData?.get("score") as? Int ?: 0
+    println("score: $score")
+    gameLogic.totalScore = score
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,6 +50,10 @@ fun GameScreen() {
                     onDragEnd = {
                         if (gameLogic.isGameOver()) {
                             val filePath = "game_score.json"
+                            CoroutineScope(Dispatchers.IO).launch {
+                                saveScoreToJson(context, gameLogic.totalScore, filePath)
+
+                            }
                         } else {
                             println("swiped")
                         }
