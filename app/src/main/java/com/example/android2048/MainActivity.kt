@@ -50,8 +50,7 @@ fun Screen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val scoreData = readScoreToJson(context, "game_score.json")
     val score = scoreData?.get("score") as? Int ?: 0
-    println("score: $score")
-    gameLogic.totalScore = score
+    var move: Int = -1
 
     Box(modifier.fillMaxWidth()) {
         Image(
@@ -67,6 +66,13 @@ fun Screen(modifier: Modifier = Modifier) {
                 .pointerInput(Unit){
                     detectDragGestures(
                         onDragEnd = {
+                            when (move) {
+                                0 -> gameLogic.swipeLeft()
+                                1 -> gameLogic.swipeDown()
+                                2 -> gameLogic.swipeRight()
+                                3 -> gameLogic.swipeUp()
+                                else -> println("invalide move: $move")
+                            }
                             if (gameLogic.isGameOver()) {
                                 val filePath = "/home/tosh/0x100/game_score.json"
                                 CoroutineScope(Dispatchers.IO).launch {
@@ -79,19 +85,19 @@ fun Screen(modifier: Modifier = Modifier) {
                         },
                         onDrag = { change, dragAmount ->
                             change.consume()
-                            val threshold = 32f
+                            val threshold = 50f
                             val (dx, dy) = dragAmount
                             if (abs(dx) > abs(dy) && abs(dx) > threshold) {
                                 if (dx > 0) {
-                                    gameLogic.swipeRight()
+                                    move = 2
                                 } else {
-                                    gameLogic.swipeLeft()
+                                    move = 0
                                 }
                             } else if (abs(dy) > threshold) {
                                 if (dy > 0) {
-                                    gameLogic.swipeDown()
+                                    move = 1
                                 } else {
-                                    gameLogic.swipeUp()
+                                    move = 3
                                 }
                             }
                         }
