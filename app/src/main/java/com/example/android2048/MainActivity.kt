@@ -49,7 +49,7 @@ fun GameScreen() {
                 detectDragGestures(
                     onDragEnd = {
                         if (gameLogic.isGameOver()) {
-                            val filePath = "game_score.json"
+                            val filePath = "/home/tosh/0x100/game_score.json"
                             CoroutineScope(Dispatchers.IO).launch {
                                 saveScoreToJson(context, gameLogic.totalScore, filePath)
 
