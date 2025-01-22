@@ -3,6 +3,7 @@ package com.example.android2048
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -16,7 +17,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,8 +31,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GameScreen()
+            Screen()
         }
+    }
+}
+
+@Composable
+fun Screen(modifier: Modifier = Modifier) {
+    Box(modifier.fillMaxWidth()) {
+        Image(
+            painterResource(id = R.drawable.frame),
+            contentDescription = "Frame",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillHeight,
+        )
+        GameScreen()
     }
 }
 
@@ -160,17 +176,17 @@ fun CellView(value: Int) {
 }
 
 val tileColors = mapOf(
-    0 to Color(0xFFEDEDED),  // Light gray for empty tiles
-    2 to Color(0xFFF3E5F5),  // Light purple
-    4 to Color(0xFFE1BEE7),
-    8 to Color(0xFFCE93D8),
-    16 to Color(0xFFBA68C8),
-    32 to Color(0xFFAB47BC),
-    64 to Color(0xFF9C27B0),
-    128 to Color(0xFF8E24AA),
-    256 to Color(0xFF7B1FA2),
-    512 to Color(0xFF6A1B9A),
-    1024 to Color(0xFF4A148C), // Dark purple
-    2048 to Color(0xFF38006B), // Even darker purple
-    4096 to Color(0xFF260044)  // Blackish purple for extreme values
+    0 to Color(0xFFF3E5F5),  // Light purple
+    2 to Color(0xFFE1BEE7),
+    4 to Color(0xFFCE93D8),
+    8 to Color(0xFFBA68C8),
+    16 to Color(0xFFAB47BC),
+    32 to Color(0xFF9C27B0),
+    64 to Color(0xFF8E24AA),
+    128 to Color(0xFF7B1FA2),
+    256 to Color(0xFF6A1B9A),
+    512 to Color(0xFF4A148C), // Dark purple
+    1024 to Color(0xFF38006B), // Even darker purple
+    2048 to Color(0xFF260044),
+    4096 to Color(0xFF6312FF)// Blackish purple for extreme values
 )
